@@ -1,0 +1,31 @@
+@prefix : <http://nkllon.com/sys#> .
+
+# --- Devices ---
+:MacM4Mini a :Host ; :hasPort :M4_Port1, :M4_AudioIn .
+:Ubuntu_Prod a :Host ; :isUptimeCritical true ; :hasPort :Ubuntu_Port1 .
+:MotuM4 a :AudioInterface ; :hasPort :Motu_Out .
+:ConnectPRO_KVM a :KVM ; :hasPort :KVM_In1, :KVM_In2 .
+:SamsungOdyssey a :SmartDisplay ; :hasPort :Odyssey_HDMI_Out .
+:YamahaPreAmp a :PreAmp ; :hasPort :Yamaha_HDMI_In, :Yamaha_Audio_In .
+
+# --- Connections ---
+
+# 1. Mac M4 Chain (Passes Rule 3: Bidirectional cable)
+:M4_Port1 a :Port ; :physicalForm "USB-C" ; :connectsVia :Cable_A ; :belongsToDevice :MacM4Mini .
+:Cable_A a :Cable ; :isBidirectional true ; :connectsTo :KVM_In1 .
+:KVM_In1 a :Port ; :physicalForm "DisplayPort" ; :belongsToDevice :ConnectPRO_KVM .
+
+# 2. Ubuntu Cloudflare Chain (Passes Rule 4: High-priority port)
+:Ubuntu_Port1 a :Port ; :connectsVia :Cable_B ; :belongsToDevice :Ubuntu_Prod .
+:Cable_B a :Cable ; :connectsTo :KVM_In2 .
+:KVM_In2 a :Port ; :portPriority "High-Priority" ; :belongsToDevice :ConnectPRO_KVM .
+
+# 3. Audio Chain (Passes Rule 2: Bypasses KVM, connects to PreAmp)
+:Motu_Out a :Port ; :connectsVia :Direct_USB ; :belongsToDevice :MotuM4 .
+:Direct_USB a :Cable ; :connectsTo :Yamaha_Audio_In .
+:Yamaha_Audio_In a :Port ; :belongsToDevice :YamahaPreAmp .
+
+# 4. eARC Return Path (Passes Rule 1: Odyssey to Yamaha)
+:Odyssey_HDMI_Out a :Port ; :physicalForm "HDMI-eARC" ; :connectsVia :HDMI_eARC_Cable ; :belongsToDevice :SamsungOdyssey .
+:HDMI_eARC_Cable a :Cable ; :connectsTo :Yamaha_HDMI_In .
+:Yamaha_HDMI_In a :Port ; :physicalForm "HDMI-eARC" ; :belongsToDevice :YamahaPreAmp .

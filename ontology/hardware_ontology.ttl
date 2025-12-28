@@ -1,0 +1,35 @@
+@prefix : <http://nkllon.com/sys#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+:HardwareOntology a owl:Ontology .
+
+# Classes
+:Device a owl:Class .
+:Host a owl:Class ; rdfs:subClassOf :Device .
+:KVM a owl:Class ; rdfs:subClassOf :Device .
+:AudioInterface a owl:Class ; rdfs:subClassOf :Device .
+:SmartDisplay a owl:Class ; rdfs:subClassOf :Device .
+:PreAmp a owl:Class ; rdfs:subClassOf :Device .
+
+:Port a owl:Class .
+:Cable a owl:Class .
+:Adapter a owl:Class .
+
+# Object Properties
+:hasPort a owl:ObjectProperty ; rdfs:domain :Device ; rdfs:range :Port .
+:connectsVia a owl:ObjectProperty ; rdfs:domain :Port ; rdfs:range :Cable .
+:connectsTo a owl:ObjectProperty ; rdfs:domain :Cable ; rdfs:range :Port .
+:adaptsTo a owl:ObjectProperty ; rdfs:domain :Port ; rdfs:range :Adapter .
+:belongsToDevice a owl:ObjectProperty ; rdfs:domain :Port ; rdfs:range :Device .
+
+# Data Properties
+:physicalForm a owl:DatatypeProperty ; rdfs:range xsd:string .
+:protocol a owl:DatatypeProperty ; rdfs:range xsd:string .
+:isBidirectional a owl:DatatypeProperty ; rdfs:range xsd:boolean .
+:isActive a owl:DatatypeProperty ; rdfs:range xsd:boolean .
+:isEncrypted a owl:DatatypeProperty ; rdfs:range xsd:boolean .
+:isUptimeCritical a owl:DatatypeProperty ; rdfs:range xsd:boolean .
+:portPriority a owl:DatatypeProperty ; rdfs:range xsd:string .

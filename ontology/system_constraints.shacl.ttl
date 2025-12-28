@@ -1,0 +1,82 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix : <http://nkllon.com/sys#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# RULE 1: Odyssey eARC Return Path
+# Smart Display must have HDMI-eARC path back to PreAmp to hear internal apps
+:EARCReturnShape a sh:NodeShape ;
+    sh:targetClass :SmartDisplay ;
+    sh:sparql [
+        sh:message "ERROR: Smart Display (Odyssey) requires an HDMI-eARC path back to the PreAmp (Yamaha) to hear internal apps." ;
+        sh:select """
+            PREFIX : <http://nkllon.com/sys#>
+            SELECT $this
+            WHERE {
+                $this a :SmartDisplay .
+                FILTER NOT EXISTS {
+                    $this :hasPort ?port .
+                    ?port :connectsVia ?cable .
+                    ?cable :connectsTo ?preampPort .
+                    ?preampPort :belongsToDevice ?preamp .
+                    ?preamp a :PreAmp .
+                }
+            }
+        """ ;
+    ] .
+
+# RULE 2: Audio Purity (Motu vs KVM)
+# Audio interface must bypass KVM and connect directly to Host or PreAmp
+:NoAudioOnKVM a sh:NodeShape ;
+    sh:targetClass :AudioInterface ;
+    sh:sparql [
+        sh:message "PRO AUDIO VIOLATION: Motu M4 must bypass KVM and connect directly to Host or PreAmp." ;
+        sh:select """
+            PREFIX : <http://nkllon.com/sys#>
+            SELECT $this
+            WHERE {
+                $this :hasPort ?port .
+                ?port :connectsVia ?cable .
+                ?cable :connectsTo ?otherPort .
+                ?otherPort :belongsToDevice ?device .
+                ?device a :KVM .
+            }
+        """ ;
+    ] .
+
+# RULE 3: Cable Directionality for M4
+# Cables from USB-C ports to DisplayPort must be bidirectional
+:BidirectionalCableShape a sh:NodeShape ;
+    sh:targetClass :Cable ;
+    sh:sparql [
+        sh:message "CABLE WARNING: Path from M4 (USB-C) to KVM (DP) requires a verified bidirectional cable." ;
+        sh:select """
+            PREFIX : <http://nkllon.com/sys#>
+            SELECT $this
+            WHERE {
+                ?srcPort :connectsVia $this .
+                ?srcPort :physicalForm "USB-C" .
+                $this :connectsTo ?dstPort .
+                ?dstPort :physicalForm "DisplayPort" .
+                FILTER NOT EXISTS { $this :isBidirectional true }
+            }
+        """ ;
+    ] .
+
+# RULE 4: Production Uptime Priority (kept from original)
+# Uptime-critical hosts must connect to high-priority KVM ports
+:UptimeCriticalShape a sh:NodeShape ;
+    sh:targetClass :Host ;
+    sh:sparql [
+        sh:message "RISK: Production Cloudflare Hosts must connect to High-Priority KVM ports." ;
+        sh:select """
+            PREFIX : <http://nkllon.com/sys#>
+            SELECT $this
+            WHERE {
+                $this :isUptimeCritical true ;
+                      :hasPort ?hostPort .
+                ?hostPort :connectsVia ?cable .
+                ?cable :connectsTo ?kvmPort .
+                FILTER NOT EXISTS { ?kvmPort :portPriority "High-Priority" }
+            }
+        """ ;
+    ] .
