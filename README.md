@@ -1,6 +1,10 @@
 # NKLLON Hardware Topology System
 
+[![CI](https://github.com/nkllon/kvm/actions/workflows/ci.yml/badge.svg)](https://github.com/nkllon/kvm/actions/workflows/ci.yml)
+
 A semantic web validation system for KVM hardware topologies using RDF/OWL ontologies and SHACL constraints.
+
+**Repository**: [github.com/nkllon/kvm](https://github.com/nkllon/kvm)
 
 ## Overview
 
