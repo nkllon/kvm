@@ -49,3 +49,15 @@ dmypy.json
 # OS
 .DS_Store
 Thumbs.db
+
+# Generated reports and visualizations
+reports/
+*.html
+!docs/**/*.html
+topology_visualization.html
+validation_report.*
+
+# Temporary files
+*.tmp
+*.bak
+.~*

@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # Validation service
+  validator:
+    build: .
+    container_name: nkllon-validator
+    volumes:
+      - ./data:/app/data:ro
+      - ./ontology:/app/ontology:ro
+      - ./reports:/app/reports
+    environment:
+      - NKLLON_PROJECT_ROOT=/app
+    command: [ "uv", "run", "python", "-m", "nkllon.validate", "--export", "/app/reports/validation_report.json" ]
+
+  # Interactive visualization server
+  visualizer:
+    build: .
+    container_name: nkllon-visualizer
+    volumes:
+      - ./data:/app/data:ro
+      - ./ontology:/app/ontology:ro
+      - ./reports:/app/reports
+    environment:
+      - NKLLON_PROJECT_ROOT=/app
+    command: [ "uv", "run", "nkllon", "visualize", "--output", "/app/reports/topology.html" ]
+    depends_on:
+      - validator
+
+  # Development environment
+  dev:
+    build: .
+    container_name: nkllon-dev
+    volumes:
+      - .:/app
+    environment:
+      - NKLLON_PROJECT_ROOT=/app
+    command: [ "bash" ]
+    stdin_open: true
+    tty: true

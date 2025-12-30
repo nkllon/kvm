@@ -27,8 +27,8 @@ chmod +x script.sh
 #### Issue 1: Add Missing Property Definition
 Add to `hardware_ontology.ttl`:
 ```turtle
-:belongsToDevice a owl:ObjectProperty ; 
-    rdfs:domain :Port ; 
+:belongsToDevice a owl:ObjectProperty ;
+    rdfs:domain :Port ;
     rdfs:range :Device .
 ```
 
@@ -157,7 +157,7 @@ G = rdflib_to_networkx_graph(g)
 
 # Draw
 pos = nx.spring_layout(G)
-nx.draw(G, pos, with_labels=True, node_color='lightblue', 
+nx.draw(G, pos, with_labels=True, node_color='lightblue',
         node_size=500, font_size=8, arrows=True)
 plt.savefig("topology_diagram.png", dpi=300, bbox_inches='tight')
 ```

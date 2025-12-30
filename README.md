@@ -64,6 +64,18 @@ uv run nkllon validate
 
 # Using Python module
 uv run python -m nkllon.validate
+
+# With environment selection
+uv run nkllon validate --env prod
+
+# With verbose logging
+uv run nkllon validate --verbose
+
+# Export report to HTML
+uv run nkllon validate --export report.html --format html
+
+# Export report to JSON
+uv run nkllon validate --export report.json --format json
 ```
 
 **Example output:**
@@ -72,18 +84,19 @@ uv run python -m nkllon.validate
 NKLLON Hardware Topology Validation
 ================================================================================
 
-Ontology: hardware_ontology.ttl
-SHACL:    system_constraints.shacl.ttl
-Data:     physical_deployment.ttl
+Environment: prod
+Ontology:    hardware_ontology.ttl
+SHACL:       system_constraints.shacl.ttl
+Data:        physical_deployment.ttl
 
 --------------------------------------------------------------------------------
 
 ✅ VALIDATION PASSED
 
 All SHACL constraints satisfied:
-  ✓ Rule 1: M4 Mac Mini bidirectional cables
-  ✓ Rule 2: Audio interfaces bypass KVMs
-  ✓ Rule 3: Legacy active adapters (if applicable)
+  ✓ Rule 1: eARC return path (SmartDisplay to PreAmp)
+  ✓ Rule 2: Audio interfaces bypass KVMs (can connect to PreAmp)
+  ✓ Rule 3: Bidirectional cables (USB-C to DisplayPort)
   ✓ Rule 4: Production uptime-critical ports
 
 ================================================================================
@@ -110,6 +123,43 @@ uv run python -m nkllon.query
 - Check uptime-critical host configurations
 - Display all devices by type
 
+### Visualize Topology
+
+Generate an interactive D3.js visualization of your hardware topology:
+
+```bash
+# Using make
+make visualize
+
+# Using CLI
+uv run nkllon visualize --output topology.html
+
+# For specific environment
+uv run nkllon visualize --env staging --output staging_topology.html
+```
+
+This creates an interactive HTML file with:
+- Force-directed graph layout
+- Color-coded device types
+- Zoom and pan controls
+- Drag-and-drop nodes
+- Connection labels
+
+### Compare Topologies
+
+Compare two topology configurations to see what changed:
+
+```bash
+# Compare two files
+uv run nkllon diff data/old.ttl data/new.ttl
+
+# Show only device-level changes
+uv run nkllon diff data/old.ttl data/new.ttl --devices-only
+
+# Using make (requires FILE1 and FILE2 variables)
+make diff FILE1=data/old.ttl FILE2=data/new.ttl
+```
+
 ### Run Tests
 
 ```bash
@@ -118,6 +168,9 @@ make test
 
 # Using pytest directly
 uv run pytest tests/ -v
+
+# With coverage report
+make coverage
 ```
 
 ### Lint and Format
@@ -129,6 +182,22 @@ make lint
 # Auto-format code
 make format
 ```
+
+### Docker Support
+
+Run validation in a Docker container:
+
+```bash
+# Build image
+make docker-build
+
+# Run validation
+make docker-run
+
+# Use docker-compose for full stack
+make docker-compose-up
+```
+
 
 ## Ontology Structure
 

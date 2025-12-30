@@ -1,0 +1,9 @@
+# Docker
+reports/
+*.html
+topology_visualization.html
+
+# Temporary files
+*.tmp
+*.bak
+.~*
