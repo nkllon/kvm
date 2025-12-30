@@ -31,7 +31,11 @@ line-length = 100
 target-version = "py311"
 
 [tool.ruff.lint]
-select = ["F"]
+# Smart & Safe Strategy:
+# - Select "F" (Pyflakes) for logical errors.
+# - Select "I" (Isort) for auto-sorted imports.
+# - Do NOT select "E" (Style) - let the formatter handle it.
+select = ["F", "I"]
 ignore = []
 
 [tool.mypy]

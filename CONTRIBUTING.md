@@ -22,6 +22,7 @@ Thank you for your interest in contributing! This document provides guidelines a
 ### Setup
 
 1. **Fork the repository**
+
    ```bash
    # Click "Fork" on GitHub, then clone your fork
    git clone https://github.com/YOUR_USERNAME/kvm.git
@@ -29,6 +30,7 @@ Thank you for your interest in contributing! This document provides guidelines a
    ```
 
 2. **Install dependencies**
+
    ```bash
    # Using make
    make install
@@ -38,11 +40,13 @@ Thank you for your interest in contributing! This document provides guidelines a
    ```
 
 3. **Install pre-commit hooks**
+
    ```bash
    uv run pre-commit install
    ```
 
 4. **Run tests to verify setup**
+
    ```bash
    make test
    ```
@@ -78,6 +82,7 @@ git commit -m "docs: update README with new examples"
 ```
 
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -94,19 +99,22 @@ Types:
 - Write docstrings for all public functions and classes
 - Maximum line length: 100 characters
 
-### Formatting and Linting
+### Linting & Formatting Strategy ("Smart & Safe")
 
-We use `ruff` for both linting and formatting:
+We prioritize **functional correctness** and **automated consistency** over manual style enforcement.
+
+- **Auto-formatting (ON)**: We use `ruff format` and pre-commit hooks to automatically format code (spacing, quotes, etc.) **and sort imports**. You should never have to manually format code or organize imports.
+- **Strict Typing (ON)**: We use `mypy` with strict settings to catch type errors before runtime. This is for safety.
+- **Style Linting (OFF)**: We explicitly **disable** stylistic linting rules (like "line too long" or "unsorted imports"). The Linter (`ruff check`) is configured to only report **logical errors** (undefined variables, syntax errors) via the `F` (Pyflakes) selector.
+
+Command reference:
 
 ```bash
-# Check code style
+# Check for logic errors and type safety (will NOT complain about style)
 make lint
 
-# Auto-format code
+# Auto-format your code (fixing style issues automatically)
 make format
-
-# Type checking
-uv run mypy src/ --ignore-missing-imports
 ```
 
 ### Docstring Format
@@ -224,11 +232,13 @@ Brief description of changes
 ### Adding New Device Types
 
 1. **Update ontology** (`ontology/hardware_ontology.ttl`):
+
    ```turtle
    :NewDeviceType a owl:Class ; rdfs:subClassOf :Device .
    ```
 
 2. **Add validation rules** (if needed) in `ontology/system_constraints.shacl.ttl`:
+
    ```turtle
    :NewDeviceShape a sh:NodeShape ;
        sh:targetClass :NewDeviceType ;
@@ -239,6 +249,7 @@ Brief description of changes
    ```
 
 3. **Add test cases** in `tests/test_validation.py`:
+
    ```python
    def test_new_device_type_exists(data_path, ontology_path):
        """Test that NewDeviceType exists."""
@@ -259,6 +270,7 @@ Brief description of changes
 4. **Update documentation** in `README.md`
 
 5. **Add example data** in `data/physical_deployment.ttl`:
+
    ```turtle
    :MyNewDevice a :NewDeviceType ;
        :hasPort :MyNewDevice_Port1 .
@@ -267,6 +279,7 @@ Brief description of changes
 ### Adding New SHACL Constraints
 
 1. **Define SHACL shape** in `ontology/system_constraints.shacl.ttl`:
+
    ```turtle
    :NewConstraintShape a sh:NodeShape ;
        sh:targetClass :TargetClass ;
@@ -283,6 +296,7 @@ Brief description of changes
    ```
 
 2. **Add passing test**:
+
    ```python
    def test_new_constraint_passes(ontology_path, shacl_path, data_path):
        """Test that new constraint passes with valid data."""
@@ -293,6 +307,7 @@ Brief description of changes
    ```
 
 3. **Add failing test**:
+
    ```python
    def test_new_constraint_fails_invalid_data():
        """Test that new constraint fails with invalid data."""
@@ -305,6 +320,7 @@ Brief description of changes
 ### Adding New Queries
 
 1. **Add query function** in `src/nkllon/query.py`:
+
    ```python
    def query_new_feature() -> List[ResultRow]:
        """Find things for new feature."""
@@ -321,6 +337,7 @@ Brief description of changes
    ```
 
 2. **Add to main()** in `query.py`:
+
    ```python
    # In main()
    print("\n🔍 Query N: New Feature")
@@ -331,6 +348,7 @@ Brief description of changes
    ```
 
 3. **Add test**:
+
    ```python
    def test_new_query_returns_results():
        """Test that new query returns expected results."""
