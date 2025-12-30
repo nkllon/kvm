@@ -3,7 +3,6 @@
 from pathlib import Path
 
 import pytest
-from rdflib import Graph
 
 from nkllon.validate import load_graph, validate_topology
 
