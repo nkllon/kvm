@@ -1,7 +1,6 @@
 """SPARQL query utilities for hardware topology."""
 
 from pathlib import Path
-from typing import List
 
 from rdflib import Graph
 from rdflib.query import ResultRow
@@ -18,7 +17,7 @@ def load_merged_graph() -> Graph:
     return graph
 
 
-def query_bidirectional_cables() -> List[ResultRow]:
+def query_bidirectional_cables() -> list[ResultRow]:
     """Find all bidirectional cables and their connections."""
     graph = load_merged_graph()
 
@@ -40,7 +39,7 @@ def query_bidirectional_cables() -> List[ResultRow]:
     return list(graph.query(query))
 
 
-def query_audio_connections() -> List[ResultRow]:
+def query_audio_connections() -> list[ResultRow]:
     """Find all audio interface connections."""
     graph = load_merged_graph()
 
@@ -59,7 +58,7 @@ def query_audio_connections() -> List[ResultRow]:
     return list(graph.query(query))
 
 
-def query_uptime_critical_hosts() -> List[ResultRow]:
+def query_uptime_critical_hosts() -> list[ResultRow]:
     """Find uptime-critical hosts and their KVM port priorities."""
     graph = load_merged_graph()
 
@@ -78,7 +77,7 @@ def query_uptime_critical_hosts() -> List[ResultRow]:
     return list(graph.query(query))
 
 
-def query_all_devices() -> List[ResultRow]:
+def query_all_devices() -> list[ResultRow]:
     """List all devices in the topology."""
     graph = load_merged_graph()
 
