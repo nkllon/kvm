@@ -1,0 +1,123 @@
+@prefix : <http://nkllon.com/arch#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# -----------------------------------------------------------------------------
+# Metamodel / Schema
+# -----------------------------------------------------------------------------
+
+:ArchitecturalPrinciple a owl:Class ;
+    rdfs:label "Architectural Principle" ;
+    rdfs:comment "A fundamental rule or guideline that dictates how the system should be built." .
+
+:Requirement a owl:Class ;
+    rdfs:label "Requirement" ;
+    rdfs:comment "A specific need or condition that the architecture must satisfy." .
+
+:StakeholderConcern a owl:Class ;
+    rdfs:label "Stakeholder Concern" ;
+    rdfs:comment "An area of interest or risk identified by stakeholders (e.g., Security, Cost)." .
+
+:DesignDecision a owl:Class ;
+    rdfs:label "Design Decision" ;
+    rdfs:comment "A concrete choice made to satisfy requirements and concerns." .
+
+:ComponentRole a owl:Class ;
+    rdfs:label "Component Role" ;
+    rdfs:comment "The role a tool or component plays in the strategy (e.g., Linter, Formatter)." .
+
+# Properties
+:satisfies a owl:ObjectProperty ;
+    rdfs:domain :DesignDecision ;
+    rdfs:range :Requirement .
+
+:addresses a owl:ObjectProperty ;
+    rdfs:domain :DesignDecision ;
+    rdfs:range :StakeholderConcern .
+
+:implements a owl:ObjectProperty ;
+    rdfs:domain :ComponentRole ;
+    rdfs:range :DesignDecision .
+
+:hasConstraint a owl:ObjectProperty ;
+    rdfs:domain :ArchitecturalPrinciple ;
+    rdfs:range :Requirement .
+
+# -----------------------------------------------------------------------------
+# Instance Data: "Smart & Safe" Linting Strategy
+# -----------------------------------------------------------------------------
+
+# The Principle
+:SmartAndSafeLinting a :ArchitecturalPrinciple ;
+    rdfs:label "Smart and Safe Linting Strategy" ;
+    rdfs:comment "A strategy prioritizing functional correctness (Safe) and automated consistency (Smart) over manual stylistic enforcement." ;
+    :hasConstraint :FunctionalCorrectness, :ZeroFriction, :automatedConsistency .
+
+# Stakeholder Concerns
+:Security a :StakeholderConcern ;
+    rdfs:label "Security" ;
+    rdfs:comment "Ensuring code does not introduce vulnerabilities or runtime crashes." .
+
+:CostEfficiency a :StakeholderConcern ;
+    rdfs:label "Cost & Efficiency" ;
+    rdfs:comment "Minimizing developer time and token usage on non-functional tasks." .
+
+:Readability a :StakeholderConcern ;
+    rdfs:label "Readability" ;
+    rdfs:comment "Ensuring the codebase remains legible and maintainable over time." .
+
+:SystemicQuality a :StakeholderConcern ;
+    rdfs:label "Systemic Quality" ;
+    rdfs:comment "Preventing bit-rot and accumulation of technical debt." .
+
+# Requirements
+:FunctionalCorrectness a :Requirement ;
+    rdfs:label "Functional Correctness" ;
+    rdfs:comment "The system must catch logical bugs and syntax errors." .
+
+:ZeroFriction a :Requirement ;
+    rdfs:label "Zero Friction" ;
+    rdfs:comment "Commits must not be blocked by subjective style rules." .
+
+:AutomatedConsistency a :Requirement ;
+    rdfs:label "Automated Consistency" ;
+    rdfs:comment "Code style must be applied automatically by tooling." .
+
+:TypeSafety a :Requirement ;
+    rdfs:label "Type Safety" ;
+    rdfs:comment "The system must enforce type correctness at compile time." .
+
+# The Design Decision
+:SeparationOfConcerns a :DesignDecision ;
+    rdfs:label "Separation of Linting and Formatting" ;
+    rdfs:comment "Decoupling the 'Linter' (logic checker) from the 'Formatter' (style applier)." ;
+    :satisfies :FunctionalCorrectness, :ZeroFriction, :AutomatedConsistency, :TypeSafety ;
+    :addresses :Security, :CostEfficiency, :Readability, :SystemicQuality .
+
+# Component Roles (Language Agnostic)
+:TheFormatter a :ComponentRole ;
+    rdfs:label "The Formatter" ;
+    rdfs:comment "A tool that strictly enforces visual style automatically." ;
+    :implements :SeparationOfConcerns ;
+    rdfs:seeAlso "Ruff Format (Python), Prettier (JS), Gofmt (Go)" .
+
+:TheLinter a :ComponentRole ;
+    rdfs:label "The Linter" ;
+    rdfs:comment "A tool that checks for logical errors and likely bugs." ;
+    :implements :SeparationOfConcerns ;
+    rdfs:seeAlso "Ruff Check (Python), ESLint (JS), Golangci-lint (Go)" .
+
+:TheTypeChecker a :ComponentRole ;
+    rdfs:label "The Type Checker" ;
+    rdfs:comment "A tool that enforces type safety." ;
+    :implements :SeparationOfConcerns ;
+    rdfs:seeAlso "MyPy (Python), TSC (TypeScript)" .
+
+:TheImportSorter a :ComponentRole ;
+    rdfs:label "The Import Sorter" ;
+    rdfs:comment "A specialized formatter for organizing dependencies." ;
+    :implements :SeparationOfConcerns ;
+    rdfs:seeAlso "Isort (Python)" .

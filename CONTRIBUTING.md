@@ -101,7 +101,7 @@ Types:
 
 ### Linting & Formatting Strategy ("Smart & Safe")
 
-We prioritize **functional correctness** and **automated consistency** over manual style enforcement.
+We prioritize **functional correctness** and **automated consistency** over manual style enforcement. For a full explanation of the design and requirements, see [ADR 0001: Smart & Safe Linting Strategy](../docs/adr/0001-smart-and-safe-linting.md).
 
 - **Auto-formatting (ON)**: We use `ruff format` and pre-commit hooks to automatically format code (spacing, quotes, etc.) **and sort imports**. You should never have to manually format code or organize imports.
 - **Strict Typing (ON)**: We use `mypy` with strict settings to catch type errors before runtime. This is for safety.

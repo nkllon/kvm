@@ -1,0 +1,54 @@
+@prefix : <http://nkllon.com/arch#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# -----------------------------------------------------------------------------
+# SHACL Shapes for Architectural Compliance
+# -----------------------------------------------------------------------------
+
+:ArchitecturalPrincipleShape a sh:NodeShape ;
+    sh:targetClass :ArchitecturalPrinciple ;
+    sh:property [
+        sh:path :hasConstraint ;
+        sh:minCount 1 ;
+        sh:message "Every architectural principle must define at least one requirement constraint." ;
+    ] .
+
+:DesignDecisionShape a sh:NodeShape ;
+    sh:targetClass :DesignDecision ;
+    sh:property [
+        sh:path :satisfies ;
+        sh:class :Requirement ;
+        sh:minCount 1 ;
+        sh:message "A design decision must satisfy at least one requirement." ;
+    ] ;
+    sh:property [
+        sh:path :addresses ;
+        sh:class :StakeholderConcern ;
+        sh:minCount 1 ;
+        sh:message "A design decision must address at least one stakeholder concern." ;
+    ] .
+
+# Specific Shape for Safe Linting Compliance
+# Any Strategy claiming to be "Safe" must address Security and TypeSafety
+:SafeStrategyShape a sh:NodeShape ;
+    sh:targetNode :SmartAndSafeLinting ;
+    sh:property [
+        sh:path [ sh:inversePath :implements ] ; # Components implementing this strategy
+        sh:qualifiedValueShape [
+             sh:class :ComponentRole ;
+             sh:hasValue :TheTypeChecker ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:message "A Safe Strategy MUST include a Type Checker component." ;
+    ] .
+
+# Specific Shape for Smart Linting Compliance
+# Any Strategy claiming to be "Smart" must address Efficiency and Consistency
+:SmartStrategyShape a sh:NodeShape ;
+    sh:targetNode :SeparationOfConcerns ;
+    sh:property [
+        sh:path :satisfies ;
+        sh:hasValue :AutomatedConsistency ;
+        sh:message "A Smart Strategy must satisfy Automated Consistency." ;
+    ] .
