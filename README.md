@@ -78,6 +78,20 @@ uv run nkllon validate --export report.html --format html
 uv run nkllon validate --export report.json --format json
 ```
 
+#### CLI Exit Codes
+
+NKLLON commands use predictable exit codes for automation:
+
+| Code | Meaning |
+| --- | --- |
+| `0` | Success, or help/usage shown without running validation |
+| `1` | Validation completed but SHACL constraints failed |
+| `2` | Required file not found |
+| `3` | RDF/SHACL parsing error |
+| `4` | Validation execution error |
+| `5` | Configuration error |
+| `99` | Unexpected error |
+
 **Example output:**
 ```
 ================================================================================
