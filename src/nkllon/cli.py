@@ -1,11 +1,30 @@
 """Command-line interface for NKLLON topology tools."""
 
 import argparse
+import logging
 import sys
 from pathlib import Path
 
 from nkllon import __version__, diff, query, reporters, validate, visualize
 from nkllon.config import default_config
+from nkllon.exceptions import (
+    ConfigurationError,
+    FileNotFoundError as NKLLONFileNotFoundError,
+    ParseError,
+    ValidationError,
+)
+
+
+EXIT_CODE_HELP = """\
+Exit codes:
+  0 - Success, or help displayed without running validation
+  1 - Validation completed but constraints failed
+  2 - Required file not found
+  3 - RDF/SHACL parsing error
+  4 - Validation execution error
+  5 - Configuration error
+  99 - Unexpected error
+"""
 
 
 def main() -> None:
@@ -13,6 +32,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="NKLLON Hardware Topology Validation System",
         formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=EXIT_CODE_HELP,
     )
 
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -92,7 +112,6 @@ def main() -> None:
     )
 
     # Info command
-    # Info command
     subparsers.add_parser(
         "info",
         help="Display system information",
@@ -112,18 +131,18 @@ def main() -> None:
         print_info()
     else:
         parser.print_help()
-        sys.exit(1)
+        sys.exit(0)
 
 
 def handle_validate(args: argparse.Namespace) -> None:
     """Handle validate command."""
-    import logging
+    logger = logging.getLogger("nkllon")
 
     # Configure logging
     if args.verbose:
-        logging.getLogger("nkllon").setLevel(logging.DEBUG)
+        logger.setLevel(logging.DEBUG)
     elif args.quiet:
-        logging.getLogger("nkllon").setLevel(logging.ERROR)
+        logger.setLevel(logging.ERROR)
 
     config = default_config
     data_path = config.get_deployment_path(args.env)
@@ -175,10 +194,31 @@ def handle_validate(args: argparse.Namespace) -> None:
                 print("\n" + "=" * 80)
             sys.exit(1)
 
-    except Exception as e:
+    except NKLLONFileNotFoundError as e:
+        logger.error("File not found: %s", e)
         if not args.quiet:
             print(f"\n❌ ERROR: {e}")
         sys.exit(2)
+    except ParseError as e:
+        logger.error("Parsing error: %s", e)
+        if not args.quiet:
+            print(f"\n❌ ERROR: {e}")
+        sys.exit(3)
+    except ValidationError as e:
+        logger.error("Validation execution error: %s", e)
+        if not args.quiet:
+            print(f"\n❌ ERROR: {e}")
+        sys.exit(4)
+    except ConfigurationError as e:
+        logger.error("Configuration error: %s", e)
+        if not args.quiet:
+            print(f"\n❌ ERROR: {e}")
+        sys.exit(5)
+    except Exception as e:  # pragma: no cover - safety net
+        logger.exception("Unexpected error during validation")
+        if not args.quiet:
+            print(f"\n❌ UNEXPECTED ERROR: {e}")
+        sys.exit(99)
 
 
 def handle_query(args: argparse.Namespace) -> None:
